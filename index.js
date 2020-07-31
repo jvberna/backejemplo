@@ -1,19 +1,36 @@
-// Incluimos el módulo dotenv que carga variables de entorno (el archivo .env)
-// automáticamente el método config() busca un archivo .env y carga las variables de entorno
+/*
+Incluimos el módulo dotenv que carga variables de entorno (el archivo .env)
+automáticamente el método config() busca un archivo .env y carga las variables de entorno
+*/
 require('dotenv').config();
-// Incluimos express
+
+/*
+Incluimos express
+*/
 const express = require('express');
-// Incluimos CORS
+
+/*
+    Incluimos CORS
+*/
 const cors = require('cors')
-    // Inclumos el archivo config.js que se encarga de configurar la conexión a BD
+
+/*
+Inclumos el archivo config.js que se encarga de configurar la conexión a BD
+*/
 const { dbConnection } = require('./database/config')
 
-// crear el servidor expres
+/*
+Crear el servidor expres
+*/
 const app = express();
 
-// Añadimos CORS a express
+/*
+Añadimos CORS a express
+*/
 app.use(cors())
-    // Conexión con BD
+    /*
+    Conexión con BD
+    */
 dbConnection();
 
 
