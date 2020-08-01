@@ -33,22 +33,12 @@ app.use(cors())
     */
 dbConnection();
 
-
-/* 
-Ejemplo de ruta / que devuelve un JSON con OK y Hola Mundo
-Ruta --> '/'
-Controlador --> (req, res) => {
-                res.json({
-                    ok: true,
-                    msg: 'Hola mundo'
-                })
+/*
+Definimos las rutas
+Cada ruta va a requerir lo que indique el correspondiente archivo de rutas, es decir, la respuesta la va a dar lo que está dentro del require
 */
-app.get('/', (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'Hola mundo'
-    });
-});
+app.use('/api/usuarios', require('./routes/usuarios'));
+
 
 /*
     Abrimos el servidor para escuchar las rutas cargadas
