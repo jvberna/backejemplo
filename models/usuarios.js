@@ -43,6 +43,19 @@ const UsuarioSchema = Schema({
 });
 
 /*
+Sobreescribir el método toJSON de forma que el objeto que recibe todos tienen _id, __v, otras propiedades
+extraemos con desestructruacion __v, _id y el resto lo dejamos en object
+a object le metemos la propiedad .uid = _id
+devolvemos el objeto, de esta forma al objeto le hemos quitado __v y el _id lo cambiamos por uid
+*/
+UsuarioSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
+
+    object.uid = _id;
+    return object;
+})
+
+/*
 Exportamos el esquema como un modelo llamado Usurio
 mediante el modelo sepueden hacer la soperaciones necesarias contra las coleciones
 
