@@ -8,8 +8,6 @@ Importacioón del modelo Usuarios, se pone con la U mayuscula (recomendación) p
 */
 const Usuario = require('../models/usuarios');
 
-const { validationResult } = require('express-validator');
-
 /*
 Declaración de los controladores para cada ruta de Usuarios
 */
@@ -17,7 +15,7 @@ Declaración de los controladores para cada ruta de Usuarios
 // get /
 const getUsuarios = async(req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre apellidos eamil rol imagen');
+    const usuarios = await Usuario.find({}, 'nombre apellidos email rol imagen');
 
     res.json({
         ok: true,
@@ -30,14 +28,7 @@ const crearUsuarios = async(req, res = response) => {
     // extraermos de req.body los valores enviados
     const { nombre, apellidos, email, password } = req.body;
 
-    const errores = validationResult(req);
 
-    if (!errores.isEmpty()) {
-        return res.status(400).json({
-            ok: false,
-            errors: errores.mapped()
-        });
-    }
 
     if (!nombre) {
         return res.status(400).json({
