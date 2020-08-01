@@ -8,10 +8,13 @@ Declaración de los controladores para cada ruta de Usuarios
 */
 
 // get /
-const getUsuarios = (req, res) => {
+const getUsuarios = async(req, res) => {
+
+    const usuarios = await Usuario.find({}, 'nombre apellidos eamil rol imagen');
+
     res.json({
         ok: true,
-        msg: 'get Usuaurios'
+        usuarios
     });
 }
 
