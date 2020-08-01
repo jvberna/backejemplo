@@ -51,6 +51,7 @@ const crearUsuarios = async(req, res = response) => {
 
         // encriptar contraseña
         const salt = bcrypt.genSaltSync(); // generamos un salt, una cadena aleatoria
+        console.log(salt);
         usuario.password = bcrypt.hashSync(password, salt); // y aquí ciframos la contraseña
 
 
@@ -74,10 +75,75 @@ const crearUsuarios = async(req, res = response) => {
 
 }
 
+
+const actualizarUsuario = async(req, res = response) => {
+
+
+    // TODO: validar que el token es válido y tiene permisos para hacer la operación
+
+    // Obtener el ID que viene en la ruta
+    const uid = req.params.id;
+
+    try {
+
+
+        // Comprobar que el usuario existe en la BD
+        const usuarioDB = await Usuario.findOne({ _id: uid });
+        if (!usuarioDB) {
+            res.status(404).json({
+                ok: false,
+                msg: 'No existe el usuario'
+            });
+        }
+
+        // cogemos todos los campos que nos llegan (y que además ya hemos comprobado con los chez que están)
+        const campos = req.body;
+
+        /* borramos los campos que no nos interesa guardar
+           password: es un procedimiento especial para cambiarlo, así que se borra del put
+           si no lo quitas, podrían manipular la url y pasar el pass saltándose el procedimiento especial de cambio de contraseña
+        */
+        delete campos.password;
+
+        // comprobar si está intentado actualizar el email, que no exista ya otro en la bd repetido
+        if (req.body.email === usuarioDB.email) {
+            // el email es el mismo, no lo actualizamos
+            delete campos.email;
+        } else {
+            // Comprobar si ya existe un email en la bd
+            const existeEmail = await Usuario.findOne({ email: req.body.email }); // Se puede abreviar Usuario.findOne({ email}); porque el nombre del campo se llama igual que la const email
+            if (existeEmail) {
+                return res.status(400).json({
+                    ok: false,
+                    ms: 'Ya existe un usuario con ese email',
+                });
+            }
+        }
+
+        // actualizamos en la BD pasándo el UID y los campos a actualizar
+        // la opcion new:true hace que devuelva el resigro que se a actualizado en la bD
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
+        res.json({
+            ok: true,
+            usuario: usuarioActualizado,
+            msg: 'Usuario actualizado'
+        });
+
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({
+            ok: false,
+            error: 'Error inesperado'
+        });
+
+    }
+}
+
 /*
 Exportamos la función para que pueda ser utilizada fuera
 */
 module.exports = {
     getUsuarios,
     crearUsuarios,
+    actualizarUsuario
 }

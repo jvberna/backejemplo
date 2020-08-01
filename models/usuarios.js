@@ -3,6 +3,8 @@ Modelo de mongoose para estructura la informaicón
 */
 const { Schema, model } = require('mongoose');
 
+// No mostrar los warngins por deprecate de algunas funciones https://mongoosejs.com/docs/deprecations.html#findandmodify
+
 /*
 también se puede hacer la importanción como
     const mongoose = require('mongoose');
@@ -49,7 +51,7 @@ a object le metemos la propiedad .uid = _id
 devolvemos el objeto, de esta forma al objeto le hemos quitado __v y el _id lo cambiamos por uid
 */
 UsuarioSchema.method('toJSON', function() {
-    const { __v, _id, ...object } = this.toObject();
+    const { __v, _id, password, ...object } = this.toObject();
 
     object.uid = _id;
     return object;

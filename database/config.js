@@ -15,7 +15,8 @@ const dbConnection = async() => {
         await mongoose.connect(process.env.DB_CONLOCAL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
+            useCreateIndex: true,
+            useFindAndModify: false // No mostrar los warngins por deprecate de algunas funciones https://mongoosejs.com/docs/deprecations.html#findandmodify
         });
 
         console.log('DB online');
