@@ -27,10 +27,14 @@ const app = express();
 /*
 Añadimos CORS a express
 */
-app.use(cors())
-    /*
-    Conexión con BD
-    */
+app.use(cors());
+/*
+Añadimos el módulo para lectura y pareo del body
+*/
+app.use(express.json());
+/*
+Conexión con BD
+*/
 dbConnection();
 
 /*
