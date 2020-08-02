@@ -4,6 +4,7 @@ const resonse = require('express');
 const bcrypt = require('bcryptjs');
 // importamos el modelo para usar la BD
 const Usuario = require('../models/usuarios');
+const { generarJWT } = require('../helpers/jwt');
 
 // función login de tipo async para hacer llamadas a la BD
 const login = async(req, res = response) => {
@@ -32,17 +33,21 @@ const login = async(req, res = response) => {
             })
         }
 
-        // Generar token y devolver
+        // Generar token y devolver, es una promesa por lo que tenemso que esperar a que se resuelva
+        const token = await generarJWT(usuarioDB._id);
+
         res.json({
             ok: true,
-            token: 'asdf',
+            token: token,
             msg: 'Login correcto'
         })
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error inesperado'
+            msg: 'Error inesperado',
+            help: error
         })
     }
 }

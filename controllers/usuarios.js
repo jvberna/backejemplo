@@ -6,7 +6,10 @@ const { response } = require('express');
 Importamos librería de cifrado
 */
 const bcrypt = require('bcryptjs');
-
+/*
+Importamos nuestra librería para generar tokens
+*/
+const { generarJWT } = require('../helpers/jwt');
 /*
 Importacioón del modelo Usuarios, se pone con la U mayuscula (recomendación) porque es una clase ya que tiene argumentos y métodos
 */
@@ -51,18 +54,20 @@ const crearUsuarios = async(req, res = response) => {
 
         // encriptar contraseña
         const salt = bcrypt.genSaltSync(); // generamos un salt, una cadena aleatoria
-        console.log(salt);
         usuario.password = bcrypt.hashSync(password, salt); // y aquí ciframos la contraseña
-
 
         // Guardamos en la BD, y devuleve una promesa y hay que espera a que termine para devolver el resultado, por lo que ponemos await delante
         // pana poner await hay que declarar la función crearUsuaruios como async
-
         await usuario.save();
+
+        // Todo correcto, devolvemos el token del usuario
+        // Generar token y devolver, es una promesa por lo que tenemso que esperar a que se resuelva
+        const token = await generarJWT(usuario.uid);
 
         res.json({
             ok: true,
             usuario: usuario,
+            token,
         });
 
     } catch (error) {
