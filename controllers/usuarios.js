@@ -26,6 +26,7 @@ const getUsuarios = async(req, res) => {
 
     res.json({
         ok: true,
+        uid: req.uid,
         usuarios
     });
 }
@@ -35,7 +36,6 @@ const crearUsuarios = async(req, res = response) => {
 
     // extraermos de req.body los valores que necesitamos comprobar especialmente en código
     const { email, password } = req.body;
-
     // try/cach para capturar errores
     try {
 
@@ -84,23 +84,28 @@ const crearUsuarios = async(req, res = response) => {
 const actualizarUsuario = async(req, res = response) => {
 
 
-    // TODO: validar que el token es válido y tiene permisos para hacer la operación
-
     // Obtener el ID que viene en la ruta
     const uid = req.params.id;
+    // comprobar que el UID recibido tiene 12 caracteres para que pueda ser utilizado en al consulta findOne
+    if (uid.length !== 24) {
+
+        return res.status(404).json({
+            ok: false,
+            msg: 'UID invalido en URL',
+        });
+    }
 
     try {
 
-
         // Comprobar que el usuario existe en la BD
         const usuarioDB = await Usuario.findOne({ _id: uid });
+
         if (!usuarioDB) {
-            res.status(404).json({
+            return res.status(404).json({
                 ok: false,
                 msg: 'No existe el usuario'
             });
         }
-
 
         // De esta forma obtenemos campos sin el campos password
         const { password, email, ...campos } = req.body
@@ -128,10 +133,10 @@ const actualizarUsuario = async(req, res = response) => {
         });
 
     } catch (error) {
-        console.log('Error: ', error);
+        console.log('Backend Error: ', error);
         res.status(500).json({
             ok: false,
-            error: 'Error inesperado'
+            error: 'Error inesperado',
         });
 
     }
@@ -140,12 +145,23 @@ const actualizarUsuario = async(req, res = response) => {
 // Borrar un usurio por ID
 const borrarUsuario = async(req, res = response) => {
 
+    // obtenemos el UID de los parametros que vienen por URL
+    // siempre viene algo porque si no no se reconoce la ruta en el delete
     const uid = req.params.id;
+    // comprobar que el UID recibido tiene 12 caracteres para que pueda ser utilizado en al consulta findOne
+    if (uid.length !== 24) {
+
+        return res.status(404).json({
+            ok: false,
+            msg: 'UID invalido en URL',
+        });
+    }
     // TODO: coprobar que tiene permisos
     try {
 
         // Comprobar que el usuario existe en la BD
         const usuarioDB = await Usuario.findById(uid);
+
         if (!usuarioDB) {
             return res.status(404).json({
                 ok: false,

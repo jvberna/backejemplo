@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 const { validarCampos } = require('../middleware/validar-campos');
 
 const { getUsuarios, crearUsuarios, actualizarUsuario, borrarUsuario } = require('../controllers/usuarios');
+const { validarJWT } = require('../middleware/validar-jwt');
 
 const router = Router();
 
@@ -10,9 +11,13 @@ const router = Router();
 Ruta Base: /api/usuarios
 */
 // get / -> devolver todos los usuarios
-router.get('/', getUsuarios);
+router.get(
+    '/',
+    validarJWT,
+    getUsuarios
+);
 
-// post / -> guardar un usuario
+// post / -> crear usuario
 router.post(
     '/', [
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
@@ -27,6 +32,7 @@ router.post(
 // put /:id -> actualizar
 router.put(
     '/:id', [
+        validarJWT,
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
         check('apellidos', 'Los apellidos son obligatorios').not().isEmpty(),
         check('rol', 'El rol es obligatorio').not().isEmpty(),
@@ -39,6 +45,7 @@ router.put(
 // delete /:id -> actualizar
 router.delete(
     '/:id',
+    validarJWT,
     borrarUsuario
 )
 
