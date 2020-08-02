@@ -42,7 +42,7 @@ Definimos las rutas
 Cada ruta va a requerir lo que indique el correspondiente archivo de rutas, es decir, la respuesta la va a dar lo que está dentro del require
 */
 app.use('/api/usuarios', require('./routes/usuarios'));
-
+app.use('/api/login', require('./routes/auth'));
 
 /*
     Abrimos el servidor para escuchar las rutas cargadas

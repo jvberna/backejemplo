@@ -38,12 +38,11 @@ router.put(
 
 // delete /:id -> actualizar
 router.delete(
-    '/:id', [
-
-        validarCampos,
-    ],
+    '/:id',
     borrarUsuario
 )
+
+
 
 /*
 Exportamos el router para poder utilizarlo fuero
