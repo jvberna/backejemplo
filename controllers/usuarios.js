@@ -132,11 +132,47 @@ const actualizarUsuario = async(req, res = response) => {
     }
 }
 
+// Borrar un usurio por ID
+const borrarUsuario = async(req, res = response) => {
+
+    const uid = req.params.id;
+    // TODO: coprobar que tiene permisos
+    try {
+
+        // Comprobar que el usuario existe en la BD
+        const usuarioDB = await Usuario.findById(uid);
+        if (!usuarioDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe el usuario'
+            });
+        }
+
+        // Construimos la sentencia de borrado usando el id recogido
+        const usuarioBorrado = await Usuario.findByIdAndRemove(uid)
+
+        // Devolvemos la operación
+        res.json({
+            ok: true,
+            msg: 'Usuario borrado',
+            borrado: usuarioBorrado
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'Error inesperado',
+        })
+    }
+
+}
+
 /*
 Exportamos la función para que pueda ser utilizada fuera
 */
 module.exports = {
     getUsuarios,
     crearUsuarios,
-    actualizarUsuario
+    actualizarUsuario,
+    borrarUsuario
 }
