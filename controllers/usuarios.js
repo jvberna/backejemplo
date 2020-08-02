@@ -96,28 +96,21 @@ const actualizarUsuario = async(req, res = response) => {
             });
         }
 
-        // cogemos todos los campos que nos llegan (y que además ya hemos comprobado con los chez que están)
-        const campos = req.body;
 
-        /* borramos los campos que no nos interesa guardar
-           password: es un procedimiento especial para cambiarlo, así que se borra del put
-           si no lo quitas, podrían manipular la url y pasar el pass saltándose el procedimiento especial de cambio de contraseña
-        */
-        delete campos.password;
+        // De esta forma obtenemos campos sin el campos password
+        const { password, email, ...campos } = req.body
 
-        // comprobar si está intentado actualizar el email, que no exista ya otro en la bd repetido
-        if (req.body.email === usuarioDB.email) {
-            // el email es el mismo, no lo actualizamos
-            delete campos.email;
-        } else {
+        if (email !== usuarioDB.email) {
             // Comprobar si ya existe un email en la bd
-            const existeEmail = await Usuario.findOne({ email: req.body.email }); // Se puede abreviar Usuario.findOne({ email}); porque el nombre del campo se llama igual que la const email
+            const existeEmail = await Usuario.findOne({ email }); // Se puede abreviar Usuario.findOne({ email}); porque el nombre del campo se llama igual que la const email
             if (existeEmail) {
                 return res.status(400).json({
                     ok: false,
                     ms: 'Ya existe un usuario con ese email',
                 });
             }
+            // añadimos email porque es correcto y hay que guardarlo
+            campos.email = email;
         }
 
         // actualizamos en la BD pasándo el UID y los campos a actualizar
