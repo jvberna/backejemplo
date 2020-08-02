@@ -35,7 +35,7 @@ const login = async(req, res = response) => {
         // Generar token y devolver
         res.json({
             ok: true,
-            token: 'asdf'
+            token: 'asdf',
             msg: 'Login correcto'
         })
     } catch (error) {
